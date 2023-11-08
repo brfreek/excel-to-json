@@ -1,11 +1,5 @@
 {
-  "name": "excel-to-json",
-  "version": "1.0.0",
-  "description": "A small lambda function to export excel to json for Mendix",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "convert-excel-to-json": "^1.7.0"
+  }
 }
