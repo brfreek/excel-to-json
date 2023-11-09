@@ -7,8 +7,10 @@ Parameters:
     Type: String
   DestinationBucketName:
     Type: String
-
 Resources:
+  ## SQS Queue
+  ExcelProcessedQueue:
+    Type: AWS::SQS::Queue
   ## S3 bucket
   SourceBucket:
     Type: AWS::S3::Bucket
@@ -33,9 +35,12 @@ Resources:
             BucketName: !Ref SourceBucketName
         - S3CrudPolicy:
             BucketName: !Ref DestinationBucketName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt ExcelProcessedQueue.QueueName
       Environment:
         Variables:
           DESTINATION_BUCKETNAME: !Ref DestinationBucketName              
+          SQS_QUEUE_URL: !GetAtt ExcelProcessedQueue
       Events:
         FileUpload:
           Type: S3
@@ -57,3 +62,12 @@ Outputs:
   FunctionArn:
     Value: !Ref XLSX2JSONMx
     Description: XLSX2JSONMx function  Arn
+  SQSqueueName:
+    Description: SQS queue name
+    Value: !GetAtt ExcelProcessedQueue.QueueName
+  SQSqueueARN:
+    Description: SQS queue ARN
+    Value: !GetAtt ExcelProcessedQueue.Arn
+  SQSqueueURL:
+    Description: SQS queue URL
+    Value: !Ref ExcelProcessedQueue

@@ -19,10 +19,10 @@ import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 const s3 = new S3Client({});
 const sqsClient = new SQSClient({});
 
-const SQS_QUEUE_URL = "https://sqs.eu-north-1.amazonaws.com/757747161455/ExcelProcessedQueue";
-const ROWS_PER_ITERATION = 10000
 
-const outputBucket = process.env.DESTINATION_BUCKETNAME;
+const ROWS_PER_ITERATION = 10000
+const OUTPUT_BUCKET = process.env.DESTINATION_BUCKETNAME;
+const SQS_QUEUE_URL = process.env.SQS_QUEUE_URL;
 
 export const handler = async (event, context) => {
     const bucket = event.Records[0].s3.bucket.name;
@@ -44,36 +44,23 @@ export const handler = async (event, context) => {
             var workbook = XLSX.read(buffer);
             console.log("Convert to JSON");
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const raw_data = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-            console.log("Create header row");
-            const headerRow = raw_data[0];
-            console.log(headerRow);
-
-            raw_data.shift();
+            const raw_data = XLSX.utils.sheet_to_json(worksheet);
 
             const totalIterations = raw_data.length / ROWS_PER_ITERATION < 1 ? 1 : raw_data.length / ROWS_PER_ITERATION;
             
             console.log(`${raw_data.length} / ${ROWS_PER_ITERATION} = ${totalIterations}`);
             for (let i = 0; i < totalIterations; i++) {
                 const startSlice = i === 0 ? 0 : i * ROWS_PER_ITERATION;
-                const tmpRow = raw_data.slice(startSlice, startSlice+ROWS_PER_ITERATION);
+                const tmpRows = raw_data.slice(startSlice, startSlice+ROWS_PER_ITERATION);
                 console.log(`Created tmp row raw_data size: ${raw_data.length}`);
-                const objects = tmpRow.map((r, i, a) => {
-                    let obj = {};
-                    for(let it = 0; it < headerRow.length; it++){
-                        let h = headerRow[it];
-                        obj[h] = r[it];
-                    }
-                    return obj;
-                });
-
-                let data = JSON.stringify({'Sheet': objects});
+                
+                let data = JSON.stringify({'Sheet': tmpRows});
     
                 //write JSON back to S3 bucket
                 const fileName = `/${key}/${i}.json`;
-                console.log(`Output bucket: ${outputBucket}`);
+                console.log(`Output bucket: ${OUTPUT_BUCKET}`);
                 const command = new PutObjectCommand({
-                    Bucket: outputBucket,
+                    Bucket: OUTPUT_BUCKET,
                     Key: fileName,
                     Body: data,
                 });
