@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Excel to JSON for Mendix
+Parameters:
+  SourceBucketName:
+    Type: String
+  DestinationBucketName:
+    Type: String
+Resources:
+  ExcelProcessedQueue:
+    Type: AWS::SQS::Queue
+  SourceBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: SourceBucketName
+  DestinationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: DestinationBucketName
+  XLSX2JSONMx:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: XLSX2JSONMx
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Timeout: 600
+      MemorySize: 2048
+      Policies:
+      - S3ReadPolicy:
+          BucketName:
+            Ref: SourceBucketName
+      - S3CrudPolicy:
+          BucketName:
+            Ref: DestinationBucketName
+      - SQSSendMessagePolicy:
+          QueueName:
+            Fn::GetAtt:
+            - ExcelProcessedQueue
+            - QueueName
+      Environment:
+        Variables:
+          DESTINATION_BUCKETNAME:
+            Ref: DestinationBucketName
+          SQS_QUEUE_URL:
+            Ref: ExcelProcessedQueue
+      Events:
+        FileUpload:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: SourceBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                - Name: suffix
+                  Value: .xlsx
+    Metadata:
+      SamResourceId: XLSX2JSONMx
+Outputs:
+  SourceBucketName:
+    Value:
+      Ref: SourceBucketName
+    Description: S3 Bucket for object storage
+  DestinationBucketName:
+    Value:
+      Ref: DestinationBucketName
+    Description: S3 destination Bucket for object storage
+  FunctionArn:
+    Value:
+      Ref: XLSX2JSONMx
+    Description: XLSX2JSONMx function  Arn
+  SQSqueueName:
+    Description: SQS queue name
+    Value:
+      Fn::GetAtt:
+      - ExcelProcessedQueue
+      - QueueName
+  SQSqueueARN:
+    Description: SQS queue ARN
+    Value:
+      Fn::GetAtt:
+      - ExcelProcessedQueue
+      - Arn
+  SQSqueueURL:
+    Description: SQS queue URL
+    Value:
+      Ref: ExcelProcessedQueue

@@ -1,6 +1,23 @@
-# Excel to JSON Mendix and AWS SAM
+# Excel to JSON with AWS and Menxix
 
-This repository contains the source code and configuration to run the serverless application model (SAM) that transforms excel files into JSON. The goal of this serverless application is to provide other external applications with the tools to efficiently transform and consume large excel files that are for instance not manageable by the target system. The example in this case is a Mendix Low code application that will run out of memory with a 500k row excel sheet. Where this solution provides a cheap and efficient way of consuming the data from the Excel file.
+This respository contains both the Mendix project as well as the AWS Serverless Application Model to test out the full setup described in [this blogpost](https://theorangeforce.com/?p=1014).
+
+In the 'mx' folder you'll find the .mpk file you can use to extract the project on your local machine.
+
+In the 'aws' folder you'll find all the resources to build and deploy the serverless architecture required for this setup.
+
+## Mendix - Excel to JSON
+
+The mx folder contains the .mpk file that can be used to extract and make a copy of the Mendix project that is used to showcase the integration between AWS and Mendix using the Excel import use case with AWS Lambda, Amazon S3 and Amazon SQS.
+
+### Prerequisites
+
+* Mendix Studio Pro 10.4 (or higer): [Mendix Marketplace](https://marketplace.mendix.com/link/studiopro/)
+* The following excel file to import: [500.000 Sales Records](https://excelbianalytics.com/wp/wp-content/uploads/2017/07/500000-Sales-Records.7z)
+
+## AWS - Excel to JSON Mendix
+
+The aws folder contains the source code and configuration to run the serverless application model (SAM) that transforms excel files into JSON. The goal of this serverless application is to provide other external applications with the tools to efficiently transform and consume large excel files that are for instance not manageable by the target system. The example in this case is a Mendix Low code application that will run out of memory with a 500k row excel sheet. Where this solution provides a cheap and efficient way of consuming the data from the Excel file.
 
 Among the services used are 
 * Amazon S3, for storing the input Excel files and output JSON files.
@@ -9,7 +26,7 @@ Among the services used are
 
 As JSON files are much larger than Excel files, the Lambda function will split the excel file in separate JSON files per 10.000 rows. 
 
-## Prerequisites
+### Prerequisites
 In order to run this application you will need the following:
 * An active AWS Account
 * AWS CLI - [Install the AWS CLI](https://aws.amazon.com/cli/)
@@ -21,7 +38,7 @@ In order to run this application you will need the following:
 Not required but very useful if you use Visual Studio Code: 
 * AWS Toolkit for Visual Studio Code (https://aws.amazon.com/visualstudiocode/)
 
-## Deploy the application
+### Deploy the application
 
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
 
