@@ -33,41 +33,27 @@ export const handler = async (event, context) => {
     }; 
     try {
         const command = new GetObjectCommand(params);
-        console.log("Start S3 Command");
         const response = await s3.send(command);
-        console.log("S3 Command finished");
         try {
             const stream = response.Body;
-            console.log("Create buffer from Stream");
             const buffer = await stream2buffer(stream);
-            console.log("Create workbook");
             var workbook = XLSX.read(buffer);
-            console.log("Convert to JSON");
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const raw_data = XLSX.utils.sheet_to_json(worksheet);
-
             const totalIterations = raw_data.length / ROWS_PER_ITERATION < 1 ? 1 : raw_data.length / ROWS_PER_ITERATION;
-            
-            console.log(`${raw_data.length} / ${ROWS_PER_ITERATION} = ${totalIterations}`);
             for (let i = 0; i < totalIterations; i++) {
                 const startSlice = i === 0 ? 0 : i * ROWS_PER_ITERATION;
-                const tmpRows = raw_data.slice(startSlice, startSlice+ROWS_PER_ITERATION);
-                console.log(`Created tmp row raw_data size: ${raw_data.length}`);
-                
+                const tmpRows = raw_data.slice(startSlice, startSlice+ROWS_PER_ITERATION);                
                 let data = JSON.stringify({'Sheet': tmpRows});
-    
                 //write JSON back to S3 bucket
                 const fileName = `/${key}/${i}.json`;
-                console.log(`Output bucket: ${OUTPUT_BUCKET}`);
                 const command = new PutObjectCommand({
                     Bucket: OUTPUT_BUCKET,
                     Key: fileName,
                     Body: data,
                 });
-
                 try {
                     const response = await s3.send(command);
-                    console.log(' response: ' + response);
                     sendSQSMessage(fileName)
                 } catch (err) {
                     console.error(err);

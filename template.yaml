@@ -40,7 +40,7 @@ Resources:
       Environment:
         Variables:
           DESTINATION_BUCKETNAME: !Ref DestinationBucketName              
-          SQS_QUEUE_URL: !GetAtt ExcelProcessedQueue
+          SQS_QUEUE_URL: !Ref ExcelProcessedQueue
       Events:
         FileUpload:
           Type: S3
