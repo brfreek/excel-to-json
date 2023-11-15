@@ -42,7 +42,7 @@ In order to run this application you will need the following:
 * An active AWS Account
 * AWS CLI - [Install the AWS CLI](https://aws.amazon.com/cli/)
 * Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
-* Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community)
+* Docker - [Install Docker community edition](https://www.docker.com/products/docker-desktop/)
 * SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
 
