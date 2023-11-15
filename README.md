@@ -50,10 +50,17 @@ In order to run this application you will need the following:
 Not required but very useful if you use Visual Studio Code: 
 * AWS Toolkit for Visual Studio Code (https://aws.amazon.com/visualstudiocode/)
 
-Your local command line interface should be authenticated against AWS. You can do this by running the following command in your shell:
+Your local command line interface should be authenticated against AWS. You can do this by running the following command in your shell if you have a set of static credentials (Access Key Secret Key):
 
 ```bash
 aws configure
+```
+
+If your account only supports temporary credentials run the following commands: 
+
+```bash
+aws configure sso
+aws sso login
 ```
 
 ### Deploy the application
