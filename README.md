@@ -40,6 +40,7 @@ As JSON files are much larger than Excel files, the Lambda function will split t
 ### Prerequisites
 In order to run this application you will need the following:
 * An active AWS Account
+* An Access Key and Secret Key
 * AWS CLI - [Install the AWS CLI](https://aws.amazon.com/cli/)
 * Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
 * Docker - [Install Docker community edition](https://www.docker.com/products/docker-desktop/)
@@ -48,6 +49,12 @@ In order to run this application you will need the following:
 
 Not required but very useful if you use Visual Studio Code: 
 * AWS Toolkit for Visual Studio Code (https://aws.amazon.com/visualstudiocode/)
+
+Your local command line interface should be authenticated against AWS. You can do this by running the following command in your shell:
+
+```bash
+aws configure
+```
 
 ### Deploy the application
 
