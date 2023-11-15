@@ -15,6 +15,17 @@ The mx folder contains the .mpk file that can be used to extract and make a copy
 * Mendix Studio Pro 10.4 (or higer): [Mendix Marketplace](https://marketplace.mendix.com/link/studiopro/)
 * The following excel file to import: [500.000 Sales Records](https://excelbianalytics.com/wp/wp-content/uploads/2017/07/500000-Sales-Records.7z)
 
+### Configuration
+
+After opening the project in Mendix Studio Pro, you'll notice 7 errors that are triggered by empty Region and URL values in the AWS Request entities and Connector actions. Follow the next steps to resolve them
+
+* Setting up the Credentials for the [Amazon S3 Connector](https://docs.mendix.com/appstore/connectors/aws/amazon-s3/#31-configuring-aws-authentication) and [Amazon SQS Connector](https://docs.mendix.com/appstore/connectors/aws/amazon-sqs/#31-configuring-aws-authentication)
+* Configure the URL of the SQS queue in the Microflow SE_RetrieveMessageFromSQS
+* Configure the AWS Region in the following places:
+    * SE_RetrieveMessageFromSQS (ReceiveMessage, DeleteMessageBatch action)
+    * ACT_ExcelUploadSave (PutObject action)
+    * ReceivedMessage_MapToDB (GetObject, DeleteObject)
+
 ## AWS - Excel to JSON Mendix
 
 The aws folder contains the source code and configuration to run the serverless application model (SAM) that transforms excel files into JSON. The goal of this serverless application is to provide other external applications with the tools to efficiently transform and consume large excel files that are for instance not manageable by the target system. The example in this case is a Mendix Low code application that will run out of memory with a 500k row excel sheet. Where this solution provides a cheap and efficient way of consuming the data from the Excel file.
