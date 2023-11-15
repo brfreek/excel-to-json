@@ -56,6 +56,7 @@ The Serverless Application Model Command Line Interface (SAM CLI) is an extensio
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
+cd $PROJECT_LOCATION/aws/
 sam build
 sam deploy --guided
 ```
